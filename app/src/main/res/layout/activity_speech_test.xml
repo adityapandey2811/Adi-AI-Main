@@ -5,5 +5,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".speechTest">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:backgroundTint="@color/white"
+        android:background="@color/white">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/design_default_color_on_secondary"
+            android:fontFamily="sans-serif"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/design_default_color_on_secondary"
+            android:fontFamily="sans-serif"
+            android:layout_above="@id/mic"
+            android:layout_centerHorizontal="true"
+            android:hint="Tap Mic and Say Something!"
+            android:textColorHint="#808080"
+            android:layout_marginBottom="30dp"/>
 
+        <ImageView
+            android:id="@+id/mic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="40dp"
+            android:src="@drawable/micimage" />
+    </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
