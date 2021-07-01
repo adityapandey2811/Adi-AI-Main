@@ -10,26 +10,30 @@
         android:layout_height="match_parent"
         android:backgroundTint="@color/white"
         android:background="@color/white">
+
         <TextView
+            android:id="@+id/topLayer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textColor="@color/design_default_color_on_secondary"
-            android:fontFamily="sans-serif"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"/>
+            android:layout_marginTop="30dp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/design_default_color_on_secondary"
+            android:textSize="20sp" />
+
         <TextView
+            android:id="@+id/results"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textColor="@color/design_default_color_on_secondary"
-            android:fontFamily="sans-serif"
             android:layout_above="@id/mic"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp"
+            android:fontFamily="sans-serif"
             android:hint="Tap Mic and Say Something!"
+            android:textColor="@color/design_default_color_on_secondary"
             android:textColorHint="#808080"
-            android:layout_marginBottom="30dp"/>
+            android:textSize="20sp" />
 
         <ImageView
             android:id="@+id/mic"
