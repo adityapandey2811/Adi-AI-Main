@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".speechTest">
     <RelativeLayout
+        android:id="@+id/relInside"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:backgroundTint="@color/white"
@@ -29,6 +30,7 @@
             android:layout_above="@id/mic"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="30dp"
+            android:layout_marginHorizontal="16dp"
             android:fontFamily="sans-serif"
             android:hint="Tap Mic and Say Something!"
             android:textColor="@color/design_default_color_on_secondary"

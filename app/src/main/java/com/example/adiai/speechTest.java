@@ -5,11 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.speech.RecognizerIntent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -35,7 +37,29 @@ public class speechTest extends AppCompatActivity {
             }
         });
     }
-    private String strResult;
+    public String strResult;
+//    private void resultParse(){
+//        strResult = strResult.toLowerCase();
+//        RelativeLayout relS = (RelativeLayout) findViewById(R.id.relStart);
+//        ImageView knockScreen = (ImageView) findViewById(R.id.backImage);
+//        RelativeLayout relI = (RelativeLayout) findViewById(R.id.relInside);
+//        TextView result = (TextView) findViewById(R.id.results);
+//        if(strResult.contains("dark")){
+//            knockScreen.setImageResource(R.drawable.blackbackground);
+//            relS.setBackgroundColor(Color.BLACK);
+//            relI.setBackgroundColor(Color.BLACK);
+//            result.setTextColor(Color.WHITE);
+//        }
+//    }
+
+
+
+
+
+
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(requestCode == RECOGNIZER_RESULT && resultCode == RESULT_OK){
@@ -43,6 +67,7 @@ public class speechTest extends AppCompatActivity {
             TextView apiResult = (TextView) findViewById(R.id.results);
             strResult = match.get(0).toString();
             apiResult.setText(strResult);
+//            resultParse();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
