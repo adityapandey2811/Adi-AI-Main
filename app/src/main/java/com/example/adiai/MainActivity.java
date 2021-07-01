@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
         Button btn = (Button) findViewById(R.id.button);
         btn.setBackgroundColor(Color.WHITE);
         btn.setTextColor(Color.BLACK);
+        //Knock Intent (App Start)
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
