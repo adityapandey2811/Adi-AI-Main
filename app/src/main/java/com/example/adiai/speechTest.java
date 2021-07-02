@@ -254,7 +254,7 @@ public class speechTest extends AppCompatActivity {
                 sendText();
             }
         }
-        else if(strResult.indexOf("what ") == 0 || strResult.indexOf("why ") == 0 || strResult.indexOf("where ") == 0 || strResult.indexOf("when ") == 0 || strResult.indexOf("which ") == 0 || strResult.indexOf("how ") == 0){
+        else if(strResult.indexOf("find ") == 0 || strResult.indexOf("search ") == 0 || strResult.indexOf("what ") == 0 || strResult.indexOf("why ") == 0 || strResult.indexOf("where ") == 0 || strResult.indexOf("when ") == 0 || strResult.indexOf("which ") == 0 || strResult.indexOf("how ") == 0){
             if(strResult.contains("how are you")){
                 Toast.makeText(getApplicationContext(), "Awesome as always 😉", Toast.LENGTH_SHORT).show();
             }
@@ -262,10 +262,16 @@ public class speechTest extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Right there in your heart 💕", Toast.LENGTH_SHORT).show();
             }
             else if(strResult.contains("when is your birthday")){
-                Toast.makeText(getApplicationContext(), "I guess you should know twinfactor 😁", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "I guess you should know twin factor 😁", Toast.LENGTH_SHORT).show();
             }
             else{
-                searchFunction();//direct search without string alteration
+                if(strResult.indexOf("find out ") == 0)
+                    strResult.substring(9);
+                if(strResult.indexOf("search ") == 0)
+                    strResult.substring(7);
+                if(strResult.indexOf("for ") == 0)
+                    strResult.substring(4);
+                searchFunction();
             }
         }
     }
