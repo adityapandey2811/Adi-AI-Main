@@ -38,6 +38,9 @@ public class speechTest extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speech_test);
         ImageView microphone = (ImageView) findViewById(R.id.mic);
+        Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT,"Wassup!!!");
         microphone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,9 +48,6 @@ public class speechTest extends AppCompatActivity {
                 micTouch.vibrate(20);
                 micTouch.vibrate(40);
                 try{
-                    Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                    speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                    speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT,"Speech To Text");
                     startActivityForResult(speechIntent,RECOGNIZER_RESULT);
                 }
                 catch(Exception ActivityNotFoundException){
@@ -136,16 +136,11 @@ public class speechTest extends AppCompatActivity {
                 }
             }
         }
-        //Final Code over
-        // Helpful
-//        final PackageManager pm = getPackageManager();
-//        List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-//
-//        for (ApplicationInfo packageInfo : packages) {
-//            Log.d(null, "Installed package :" + packageInfo.packageName);
-//            Log.d(null, "Source dir : " + packageInfo.sourceDir);
-//            Log.d(null, "Launch Activity :" + pm.getLaunchIntentForPackage(packageInfo.packageName));
-//        }
+    }
+    private void sendFunction(){
+
+    }
+    private void searchFunction(){
 
     }
     private void resultParse(){
@@ -163,6 +158,33 @@ public class speechTest extends AppCompatActivity {
                 strResult = strResult.substring(4).replace(" ","");
             }
             startFunction();
+        }
+        //Work in progress
+//        else if((strResult.contains("send") && strResult.indexOf("send") == 0)){
+//            if(strResult.contains(" to ")){
+//                strResult = strResult.substring(4).replace(" to ", " ");
+//            }
+//            if(strResult.contains(" a ")){
+//                strResult = strResult.replace(" a ", " ");
+//            }
+//            if(strResult.contains(" for ")){
+//                strResult = strResult.replace(" for ", " ");
+//            }
+//            sendFunction();
+//        }
+        else if((strResult.contains("what") && strResult.indexOf("what") == 0) || (strResult.contains("why") && strResult.indexOf("why") == 0) || (strResult.contains("where") && strResult.indexOf("where") == 0) || (strResult.contains("when") && strResult.indexOf("when") == 0) || (strResult.contains("which") && strResult.indexOf("which") == 0) || (strResult.contains("how") && strResult.indexOf("how") == 0)){
+            if(strResult.contains("how are you")){
+                Toast.makeText(getApplicationContext(), "Awesome as always 😉", Toast.LENGTH_SHORT).show();
+            }
+            else if(strResult.contains("where are you")){
+                Toast.makeText(getApplicationContext(), "Right there in your heart 💕", Toast.LENGTH_SHORT).show();
+            }
+            else if(strResult.contains("when is your birthday")){
+                Toast.makeText(getApplicationContext(), "I guess you should know twinfactor 😁", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                searchFunction();//direct search without string alteration
+            }
         }
     }
 
