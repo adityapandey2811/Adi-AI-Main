@@ -135,18 +135,23 @@ public class speechTest extends AppCompatActivity {
                 strResult = "chrome";
             }
             final PackageManager pm = getPackageManager();
+            String checkApp = null;
             //Get a list of installed apps
             List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
             for (ApplicationInfo packageInfo : packages) {
                 if((packageInfo.packageName).contains(strResult)){
+                    checkApp = packageInfo.packageName;
                     Intent unknownAppIntent = pm.getLaunchIntentForPackage(packageInfo.packageName);
                     try {
                         startActivity( unknownAppIntent );
                     } catch (Exception ActivityNotFoundException){
                         Toast.makeText(getApplicationContext(), "Can't open " + strResult, Toast.LENGTH_SHORT).show();
                     }
-                    return;
+                    break;
                 }
+            }
+            if(checkApp == null){
+                Toast.makeText(getApplicationContext(), "App not found!", Toast.LENGTH_SHORT).show();
             }
         }
     }
