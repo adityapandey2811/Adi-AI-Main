@@ -8,8 +8,9 @@ Features:
 - Easter eggs
 
 Wiki:
-- Say Turn on/off flashlight/bluetooth.
+- Say Turn on/off flashlight/bluetooth
 - Say What is "your question" or why is "your question" or when is "your question" or how is "your question", etc.
 - Say Open/Start "app name"
+- Experiment with app to find easter eggs.
 
 -----MORE FEATURES COMING SOON-----
