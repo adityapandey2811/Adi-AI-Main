@@ -139,7 +139,6 @@ public class speechTest extends AppCompatActivity {
             List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
             for (ApplicationInfo packageInfo : packages) {
                 if((packageInfo.packageName).contains(strResult)){
-                    Toast.makeText(getApplicationContext(), "App Found", Toast.LENGTH_SHORT).show();
                     Intent unknownAppIntent = pm.getLaunchIntentForPackage(packageInfo.packageName);
                     try {
                         startActivity( unknownAppIntent );
@@ -199,23 +198,23 @@ public class speechTest extends AppCompatActivity {
 
     //Handles the speech text and calls appropriate function with some string alteration
     private void resultParse(){
-        if(strResult.contains("turn") && strResult.indexOf("turn") == 0 && strResult.contains("on")){
+        if(strResult.indexOf("turn ") == 0 && strResult.contains("on ")){
             turnOnFunction();
         }
-        else if(strResult.contains("turn") && strResult.indexOf("turn") == 0  && (strResult.contains("of") || strResult.contains("off"))){
+        else if(strResult.indexOf("turn ") == 0  && (strResult.contains("of ") || strResult.contains("off "))){
             turnOffFunction();
         }
-        else if((strResult.contains("start") && strResult.indexOf("start") == 0) || (strResult.contains("open") && strResult.indexOf("open") == 0)) {
-            if (strResult.contains("start")){
-                strResult = strResult.substring(5).replace(" ","");
+        else if(strResult.indexOf("start ") == 0 || strResult.indexOf("open ") == 0) {
+            if (strResult.indexOf("start ") == 0){
+                strResult = strResult.substring(6).replace(" ","");
             }
-            else if (strResult.contains("open")){
-                strResult = strResult.substring(4).replace(" ","");
+            else if (strResult.indexOf("open ") == 0){
+                strResult = strResult.substring(5).replace(" ","");
             }
             startFunction();
         }
         //Work in progress send function
-        else if((strResult.indexOf("send") == 0)){
+        else if((strResult.indexOf("send ") == 0)){
             int flag = 0;
             strResult = strResult.substring(5);
             if(strResult.indexOf("a ") == 0){
@@ -250,7 +249,7 @@ public class speechTest extends AppCompatActivity {
                 sendText();
             }
         }
-        else if((strResult.indexOf("what") == 0) || (strResult.indexOf("why") == 0) || (strResult.contains("where") && strResult.indexOf("where") == 0) || (strResult.contains("when") && strResult.indexOf("when") == 0) || (strResult.contains("which") && strResult.indexOf("which") == 0) || (strResult.contains("how") && strResult.indexOf("how") == 0)){
+        else if(strResult.indexOf("what ") == 0 || strResult.indexOf("why ") == 0 || strResult.indexOf("where ") == 0 || strResult.indexOf("when ") == 0 || strResult.indexOf("which ") == 0 || strResult.indexOf("how ") == 0){
             if(strResult.contains("how are you")){
                 Toast.makeText(getApplicationContext(), "Awesome as always 😉", Toast.LENGTH_SHORT).show();
             }
