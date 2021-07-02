@@ -110,32 +110,32 @@ public class speechTest extends AppCompatActivity {
     }
     private void startFunction() {
         // Final Code
-//        if(strResult == "android" || strResult == "miui"){
-//            Toast.makeText(getApplicationContext(), strResult + " is OS, Can't open!", Toast.LENGTH_SHORT).show();
-//        }
-//        else if(strResult == "samsung" || strResult == "oneplus" || strResult == "xiaomi" || strResult == "nokia" || strResult == "qualcomm"){
-//            Toast.makeText(getApplicationContext(), strResult + " is Brand, Can't open!", Toast.LENGTH_SHORT).show();
-//        }
-//        else if(strResult == "google"){
-//            strResult = "chrome";
-//        }
-//        else{
-//            final PackageManager pm = getPackageManager();
-////            get a list of installed apps
-//            List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-//            for (ApplicationInfo packageInfo : packages) {
-//                if((packageInfo.packageName).contains(strResult)){
-//                    Toast.makeText(getApplicationContext(), "App Found", Toast.LENGTH_SHORT).show();
-//                    Intent unknownAppIntent = pm.getLaunchIntentForPackage(packageInfo.packageName);
-//                    try {
-//                        startActivity( unknownAppIntent );
-//                    } catch (Exception ActivityNotFoundException){
-//                        Toast.makeText(getApplicationContext(), "Can't open " + strResult, Toast.LENGTH_SHORT).show();
-//                    }
-//                    return;
-//                }
-//            }
-//        }
+        if(strResult.contains("android") || strResult.contains("miui")){
+            Toast.makeText(getApplicationContext(), strResult + " is OS, Can't open!", Toast.LENGTH_SHORT).show();
+        }
+        else if(strResult.contains("samsung") || strResult.contains("oneplus") || strResult.contains("xiaomi") || strResult.contains("nokia") || strResult.contains("qualcomm")){
+            Toast.makeText(getApplicationContext(), strResult + " is Brand, Can't open!", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            if(strResult.contains("google")){
+                strResult = "chrome";
+            }
+            final PackageManager pm = getPackageManager();
+//            get a list of installed apps
+            List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+            for (ApplicationInfo packageInfo : packages) {
+                if((packageInfo.packageName).contains(strResult)){
+                    Toast.makeText(getApplicationContext(), "App Found", Toast.LENGTH_SHORT).show();
+                    Intent unknownAppIntent = pm.getLaunchIntentForPackage(packageInfo.packageName);
+                    try {
+                        startActivity( unknownAppIntent );
+                    } catch (Exception ActivityNotFoundException){
+                        Toast.makeText(getApplicationContext(), "Can't open " + strResult, Toast.LENGTH_SHORT).show();
+                    }
+                    return;
+                }
+            }
+        }
         //Final Code over
         // Helpful
 //        final PackageManager pm = getPackageManager();

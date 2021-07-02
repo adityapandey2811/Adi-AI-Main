@@ -2,9 +2,11 @@ package com.example.adiai;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -32,6 +34,12 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                Vibrator micTouch = (Vibrator)   getSystemService(Context.VIBRATOR_SERVICE);
+                micTouch.vibrate(30);
+                micTouch.vibrate(20);
+                micTouch.vibrate(10);
+                micTouch.vibrate(5);
+                micTouch.vibrate(1);
                 Toast.makeText(getApplicationContext(), "Knocked out! lol 😂", Toast.LENGTH_SHORT).show();
                 return false;
             }
