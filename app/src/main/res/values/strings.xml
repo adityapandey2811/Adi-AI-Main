@@ -1,3 +1,6 @@
 <resources>
-    <string name="app_name">AdiAI</string>
+    <string name="app_name">AI</string>
+    <string name="mic_text_placeholder">Tap Mic and Say Something!</string>
+    <string name="open_in_browser">Open in browser</string>
+    <string name="content_description">Image Resource for application</string>
 </resources>

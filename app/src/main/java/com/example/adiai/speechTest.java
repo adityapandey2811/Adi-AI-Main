@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.speech.RecognizerIntent;
+import android.telephony.SmsManager;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -22,6 +23,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
+
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,18 +33,18 @@ public class speechTest extends AppCompatActivity {
 
     //Variables for different functions support in the app
     private final int RECOGNIZER_RESULT = 1171;
-    private String strResult;
-    private CameraManager camManager;
-    private BluetoothAdapter mBluetoothAdapter;
-    private WebView webView;
-    private Button openInBrowser;
+    private String strResult = null;
+    private CameraManager camManager = null;
+    private BluetoothAdapter mBluetoothAdapter = null;
+    private WebView webView = null;
+    private Button openInBrowser = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speech_test);
 
         //Speech Recognition
-        ImageView microphone = (ImageView) findViewById(R.id.mic);
+        ImageView microphone = findViewById(R.id.mic);
         Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT,"What's on mind?");
@@ -48,9 +52,9 @@ public class speechTest extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Disabling button and webView
-                openInBrowser = (Button) findViewById(R.id.sendToBrowser);
+                openInBrowser = findViewById(R.id.sendToBrowser);
                 openInBrowser.setVisibility(View.GONE);
-                webView = (WebView) findViewById(R.id.web);
+                webView = findViewById(R.id.web);
                 webView.setVisibility(View.GONE);
                 //Vibration
                 Vibrator micTouch = (Vibrator)   getSystemService(Context.VIBRATOR_SERVICE);
@@ -91,18 +95,14 @@ public class speechTest extends AppCompatActivity {
                 startActivityForResult(enableBtIntent,10);
             }
         }
-//        else if(strResult.contains("wifi") || strResult.contains("wi-fi") || strResult.contains("wi fi")){
-//            private WifiManager wifiManager;
-//            wifiManager = (WifiManager)this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-//            wifiManager.setWifiEnabled(true);
-//        }
-//        Android 10 does not support wifi automation with program so no need to add it to the code
     }
 
     //Turn off function
     private void turnOffFunction(){
         if(strResult.contains("flashlight") || strResult.contains("light")){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                camManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+                strResult = null;
                 try{
                     strResult = camManager.getCameraIdList()[0];
                     camManager.setTorchMode(strResult, false);
@@ -112,23 +112,20 @@ public class speechTest extends AppCompatActivity {
             }
         }
         else if(strResult.contains("bluetooth") || strResult.contains("blue tooth")){
+            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             mBluetoothAdapter.disable();
         }
-//        else if(strResult.contains("wifi") || strResult.contains("wi-fi") || strResult.contains("wi fi")){
-//            private WifiManager wifiManager;
-//            wifiManager.setWifiEnabled(false);
-//        }
-//        Android 10 does not support wifi automation with program so no need to add it to the code
     }
 
     //Start function
     private void startFunction() {
         // Final Code
+        View view = findViewById(R.id.mic);
         if(strResult.contains("android") || strResult.contains("miui")){
-            Toast.makeText(getApplicationContext(), strResult + " is OS, Can't open!", Toast.LENGTH_SHORT).show();
+            Snackbar.make(view,strResult + " is OS, Can't open!",Snackbar.LENGTH_SHORT).show();
         }
         else if(strResult.contains("samsung") || strResult.contains("oneplus") || strResult.contains("xiaomi") || strResult.contains("nokia") || strResult.contains("qualcomm")){
-            Toast.makeText(getApplicationContext(), strResult + " is Brand, Can't open!", Toast.LENGTH_SHORT).show();
+            Snackbar.make(view,strResult + " is Brand, Can't open!",Snackbar.LENGTH_SHORT).show();
         }
         else{
             if(strResult.contains("google")){
@@ -151,19 +148,83 @@ public class speechTest extends AppCompatActivity {
                 }
             }
             if(checkApp == null){
-                Toast.makeText(getApplicationContext(), "App not found!", Toast.LENGTH_SHORT).show();
+                Snackbar.make(view,"App not found!",Snackbar.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    //Send message through text function
+    private void sendText(String name, String message){
+        //get contacts will be good instead of number
+        int i = 0;
+        if(name != null && message != null){
+            try{
+                SmsManager smsManager = SmsManager.getDefault();
+                smsManager.sendTextMessage(name,null,message,null,null);
+                i = 1;
+                Toast.makeText(this, "SMS Sent Successfully", Toast.LENGTH_SHORT).show();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        if(i!=1){
+            try{
+                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+//                sendIntent.putExtra("sms_body", "default content");
+                sendIntent.setType("vnd.android-dir/mms-sms");
+                startActivity(sendIntent);
+            } catch (Exception ex){
+                Toast.makeText(this, "SMS not sent!", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     //Send message through whatsapp function
-    private void sendWhatsapp(){
+    private void sendWhatsapp(String name, String message){
+        int init = 0;
+        if(name == null && message != null){
+            Intent sendIntent = new Intent();
+            sendIntent.setPackage("com.whatsapp");
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+            sendIntent.setType("text/plain");
+            try {
+                startActivity(sendIntent);
+                init = 1;
+            } catch (Exception e){
+                e.printStackTrace();
+            }
 
+        }
+        if(init != 1 && name != null && message != null){
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            try {
+                String url = "https://api.whatsapp.com/send?phone="+ name +"&text=" + URLEncoder.encode(message, "UTF-8");
+                i.setPackage("com.whatsapp");
+                i.setData(Uri.parse(url));
+                startActivity(i);
+                init = 1;
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        if(init != 1){
+            strResult = "whatsapp";
+            startFunction();
+        }
     }
 
-    //Send message through text function
-    private void sendText(){
-
+    //Send message through email
+    private void sendEmail(String message){
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:"));
+//        intent.putExtra(Intent.EXTRA_SUBJECT,subject);
+        intent.putExtra(Intent.EXTRA_TEXT,message);
+        try {
+            startActivity(intent);
+        } catch (Exception ActivityNotFoundException) {
+            Toast.makeText(getApplicationContext(),"Can't send email!", Toast.LENGTH_LONG).show();
+        }
     }
 
     //Search in app function
@@ -192,23 +253,31 @@ public class speechTest extends AppCompatActivity {
 
                 //Intent to Browser
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com/search?q=" + strResult));
+                View view = findViewById(R.id.mic);
                 try{
                     startActivity(browserIntent);
                 } catch(Exception ActivityNotFoundException){
-                    Toast.makeText(getApplicationContext(), "No browser found!", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(view,"No browser found!",Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
+    //Call using call function
+    private void callFunction(String numberOrName){
+
+    }
+
     //Handles the speech text and calls appropriate function with some string alteration
     private void resultParse(){
+        //turn function condition
         if(strResult.indexOf("turn ") == 0 && strResult.contains("on ")){
             turnOnFunction();
         }
         else if(strResult.indexOf("turn ") == 0  && (strResult.contains("of ") || strResult.contains("off "))){
             turnOffFunction();
         }
+        //start function condition
         else if(strResult.indexOf("start ") == 0 || strResult.indexOf("open ") == 0) {
             if (strResult.indexOf("start ") == 0){
                 strResult = strResult.substring(6).replace(" ","");
@@ -225,33 +294,118 @@ public class speechTest extends AppCompatActivity {
             if(strResult.indexOf("a ") == 0){
                 strResult = strResult.replace("a ", "");
             }
-            if((strResult.indexOf("text ")==0) || (strResult.indexOf("message ")==0)){
+            else if(strResult.indexOf("an ") == 0){
+                strResult = strResult.replace("an ", "");
+            }
+            //Solved email error
+            if(strResult.indexOf("mail")==0 || strResult.indexOf("email")==0 || strResult.indexOf("e-mail")==0){
+                if(strResult.indexOf("mail ") == 0)
+                    strResult = strResult.substring(5);
+                else if(strResult.indexOf("email ") == 0)
+                    strResult = strResult.substring(6);
+                else if(strResult.indexOf("e-mail ") == 0)
+                    strResult = strResult.substring(7);
+                if(strResult.indexOf("mail") == 0 || strResult.indexOf("email") == 0 || strResult.indexOf("e-mail") == 0){
+                    sendEmail(null);
+                    return;
+                }
+                flag = 3;
+            }
+            //Solved message error
+            else if(strResult.indexOf("text")==0 || strResult.indexOf("message")==0 || strResult.indexOf("sms") == 0){
+                if(strResult.indexOf("sms ") == 0)
+                    strResult = strResult.substring(4);
                 if(strResult.indexOf("text ") == 0)
-                    strResult.substring(5);
+                    strResult = strResult.substring(5);
                 if(strResult.indexOf("message ") == 0)
-                    strResult.substring(8);
-                if(strResult.indexOf("text ") == 0)
-                    strResult.substring(5);
+                    strResult = strResult.substring(8);
+                if(strResult.indexOf("sms") == 0 || strResult.indexOf("message") == 0 || strResult.indexOf("text") == 0){
+                    sendText(null,null);
+                    return;
+                }
                 flag = 1;
             }
-            if(strResult.indexOf("whatsapp ")==0){
-                strResult.substring(9);
-                if(strResult.indexOf("message ") == 0)
-                    strResult.substring(8);
-                if(strResult.indexOf("text ") == 0)
-                    strResult.substring(5);
+            //Solved whatsapp error
+            else if(strResult.indexOf("whatsapp")==0){
+                if(strResult.indexOf("whatsapp ") == 0)
+                    strResult = strResult.substring(9);
+                else if(strResult.indexOf("whatsapp") == 0){
+                    sendWhatsapp(null,null);
+                }
+                flag = 2;
             }
-            if((strResult.indexOf("to ")==0) || (strResult.indexOf("for ")==0)){
+            if((strResult.indexOf("to")==0 || strResult.indexOf("for")==0)){
                 if(strResult.indexOf("to ") == 0)
-                    strResult.substring(3);
+                    strResult = strResult.substring(3);
                 if(strResult.indexOf("for ") == 0)
-                    strResult.substring(4);
+                    strResult = strResult.substring(4);
+                if(strResult.indexOf("our ") == 0)
+                    strResult = strResult.substring(4);
+                if(strResult.indexOf("a ") == 0)
+                    strResult = strResult.substring(4);
+                if(strResult.indexOf("to") == 0 || strResult.indexOf("for") == 0 || strResult.indexOf("our") == 0 || strResult.indexOf("a") == 0){
+                    if(flag == 1){
+                        sendText(null,null);
+                        return;
+                    }
+                    if(flag == 2){
+                        sendWhatsapp(null,null);
+                        return;
+                    }
+                }
             }
-            if(flag == 0){
-                sendWhatsapp();
+            String name = null;
+            String message = null;
+            String checkContact = null;
+            int nameIssue = 0;
+            if(!strResult.isEmpty() && strResult.substring(0,1).matches(".*\\d.*")){
+                String number = strResult.substring(0,12);
+                strResult = strResult.substring(12);
+                number = number.replace(" ","");
+                name = "+91" + number;
+                nameIssue = 1;
+            }
+            if(strResult.contains(" ")){
+                if(strResult.indexOf(" ") == 0)
+                    strResult = strResult.substring(1);
+                if(nameIssue == 0){
+                    checkContact = strResult.substring(0,strResult.indexOf(" ") + 1);
+                    strResult = strResult.substring(strResult.indexOf(" ") + 1);
+                }
+                if(strResult.indexOf("containing") ==0)
+                    strResult = strResult.substring(10);
+                else if(strResult.indexOf("saying that") == 0)
+                    strResult = strResult.substring(11);
+                else if(strResult.indexOf("saying") == 0)
+                    strResult = strResult.substring(6);
+                else if(strResult.indexOf("that is") == 0)
+                    strResult = strResult.substring(7);
+                else if(strResult.indexOf("with message") == 0)
+                    strResult = strResult.substring(12);
+                else if(strResult.indexOf("and message") == 0)
+                    strResult = strResult.substring(11);
+                if(strResult.indexOf(" ") == 0)
+                    strResult = strResult.substring(1);
+                if(strResult != null)
+                    message = strResult + ".";
+            }
+            if(flag == 2){
+                if(name!=null)
+                    sendWhatsapp(name,message);
+                else
+                    sendWhatsapp(null,message);
             }
             else if(flag == 1){
-                sendText();
+                if(name!=null)
+                    sendText(name,message);
+                else
+                    sendText(null,null);
+            }
+            else if(flag == 3){
+                if(message!=null)
+                    sendEmail(message);
+                else
+                    sendEmail(null);
             }
         }
         else if(strResult.indexOf("find ") == 0 || strResult.indexOf("search ") == 0 || strResult.indexOf("what ") == 0 || strResult.indexOf("why ") == 0 || strResult.indexOf("where ") == 0 || strResult.indexOf("when ") == 0 || strResult.indexOf("which ") == 0 || strResult.indexOf("how ") == 0){
@@ -266,13 +420,27 @@ public class speechTest extends AppCompatActivity {
             }
             else{
                 if(strResult.indexOf("find out ") == 0)
-                    strResult.substring(9);
+                    strResult = strResult.substring(9);
                 if(strResult.indexOf("search ") == 0)
-                    strResult.substring(7);
+                    strResult = strResult.substring(7);
                 if(strResult.indexOf("for ") == 0)
-                    strResult.substring(4);
+                    strResult = strResult.substring(4);
                 searchFunction();
             }
+        }
+        //Enabling call function
+        else if(strResult.indexOf("call") == 0 || strResult.indexOf("phone call") == 0){
+            if(strResult.indexOf("phone ") == 0){
+                strResult = strResult.substring(6);
+            }
+            if(strResult.indexOf("call ") == 0){
+                strResult = strResult.substring(5);
+            }
+            if(strResult.indexOf("phone call") == 0 || strResult.indexOf("call") == 0){
+                callFunction(null);
+                return;
+            }
+            callFunction(strResult);
         }
     }
 
@@ -287,11 +455,15 @@ public class speechTest extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(requestCode == RECOGNIZER_RESULT && resultCode == RESULT_OK){
-            ArrayList<String> match = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            TextView apiResult = (TextView) findViewById(R.id.results);
-            strResult = match.get(0).toString();
-            apiResult.setText(strResult);
-            strResult = strResult.toLowerCase();
+            try{
+                ArrayList<String> match = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                TextView apiResult = findViewById(R.id.results);
+                strResult = match.get(0);
+                apiResult.setText(strResult);
+                strResult = strResult.toLowerCase();
+            } catch (Exception NullPointerException){
+                Toast.makeText(getApplicationContext(), "Speech Recognition Error!", Toast.LENGTH_SHORT).show();
+            }
             resultParse();
         }
         super.onActivityResult(requestCode, resultCode, data);
