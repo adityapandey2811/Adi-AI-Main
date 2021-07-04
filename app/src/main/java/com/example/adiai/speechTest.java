@@ -35,6 +35,7 @@ public class speechTest extends AppCompatActivity {
     //Variables for different functions support in the app
     private final int RECOGNIZER_RESULT = 1171;
     private String strResult = null;
+    private String originalString = null;
     private CameraManager camManager = null;
     private BluetoothAdapter mBluetoothAdapter = null;
     private WebView webView = null;
@@ -314,6 +315,7 @@ public class speechTest extends AppCompatActivity {
         }
         else if(strResult.contains("***")){
             Toast.makeText(getApplicationContext(),"Bad Word!😔", Toast.LENGTH_LONG).show();
+            apiResult.setText("I am sorry!");
         }
         else if(strResult.contains("hello") || strResult.contains("mahalo") || strResult.contains("bonjour") || strResult.contains("sup") || strResult.contains("wassup")
         || strResult.contains("hi") || strResult.contains("nice to meet you") || strResult.contains("thank you")){
@@ -329,6 +331,7 @@ public class speechTest extends AppCompatActivity {
             strResult = strResult.replace(" ","");
             startFunction();
             if(toast == 1){
+                strResult = originalString;
                 apiResult.setText("Sorry!, didn't understand what you wanted me to do! Here's a web search for that");
                 searchFunction();
                 toast = 0;
@@ -602,6 +605,7 @@ public class speechTest extends AppCompatActivity {
                 TextView apiResult = findViewById(R.id.results);
                 strResult = match.get(0);
                 apiResult.setText(strResult);
+                originalString = strResult;
                 strResult = strResult.toLowerCase();
             } catch (Exception NullPointerException){
                 Toast.makeText(getApplicationContext(), "Speech Recognition Error!", Toast.LENGTH_SHORT).show();
