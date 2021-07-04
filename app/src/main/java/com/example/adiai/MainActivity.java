@@ -1,17 +1,28 @@
 package com.example.adiai;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.View;
+import android.webkit.PermissionRequest;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
+
 public class MainActivity extends AppCompatActivity {
+    private int CALL_PERMISSION_CODE = 1;
+    private int SMS_PERMISSION_CODE = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,10 +34,28 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),speechTest.class);
-                startActivity(intent);
+                if(ContextCompat.checkSelfPermission(MainActivity.this,
+                            Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED &&
+                        ContextCompat.checkSelfPermission(MainActivity.this,
+                            Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED ){
+                    Intent intent = new Intent(getApplicationContext(),speechTest.class);
+                    startActivity(intent);
+                }
+                else{
+                    Snackbar.make(v,"Allow all permissions!",Snackbar.LENGTH_SHORT).show();
+                    if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.CALL_PHONE}, CALL_PERMISSION_CODE);
+                    if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED)
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.SEND_SMS}, SMS_PERMISSION_CODE);
+                }
             }
         });
+//        Snackbar.make(v,"App need all permissions to work properly!",Snackbar.LENGTH_LONG).setAction("Grant", new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.CALL_PHONE}, 14);
+//            }
+//        }).show();
         //Easter egg
         btn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override

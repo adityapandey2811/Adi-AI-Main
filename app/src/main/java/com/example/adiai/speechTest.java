@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.provider.AlarmClock;
 import android.speech.RecognizerIntent;
 import android.telephony.SmsManager;
 import android.view.View;
@@ -116,7 +117,7 @@ public class speechTest extends AppCompatActivity {
             mBluetoothAdapter.disable();
         }
     }
-
+    int toast = 0;
     //Start function
     private void startFunction() {
         // Final Code
@@ -140,6 +141,7 @@ public class speechTest extends AppCompatActivity {
                     checkApp = packageInfo.packageName;
                     Intent unknownAppIntent = pm.getLaunchIntentForPackage(packageInfo.packageName);
                     try {
+                        toast = 0;
                         startActivity( unknownAppIntent );
                     } catch (Exception ActivityNotFoundException){
                         Toast.makeText(getApplicationContext(), "Can't open " + strResult, Toast.LENGTH_SHORT).show();
@@ -147,7 +149,7 @@ public class speechTest extends AppCompatActivity {
                     break;
                 }
             }
-            if(checkApp == null){
+            if(checkApp == null && toast == 0){
                 Snackbar.make(view,"App not found!",Snackbar.LENGTH_SHORT).show();
             }
         }
@@ -265,7 +267,73 @@ public class speechTest extends AppCompatActivity {
 
     //Call using call function
     private void callFunction(String numberOrName){
+        //Enters number in the dialer
+        if(numberOrName.substring(0,1).matches(".*\\d.*"))
+            try{
+                Intent phone_intent = new Intent(Intent.ACTION_CALL);
+                phone_intent.setData(Uri.parse("tel:" + numberOrName));
+                startActivity(phone_intent);
+            } catch (Exception e){
+                e.printStackTrace();
+                startActivity(new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", numberOrName, null)));
+            }
+        else{
+            startActivity(new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", numberOrName, null)));
+        }
+    }
 
+    //Set alarm using alarm function
+    private void alarmFunction(int hour, int minutes){
+        Intent intent = new Intent(AlarmClock.ACTION_SET_ALARM);
+        intent.putExtra(AlarmClock.EXTRA_HOUR, hour);
+        intent.putExtra(AlarmClock.EXTRA_MINUTES, minutes);
+        try{
+            startActivity(intent);
+        } catch (Exception ex){
+            ex.printStackTrace();
+            Toast.makeText(getApplicationContext(),"Error occured!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //Miscellaneous function
+    private void miscellaneousFunction(){
+        View view = findViewById(R.id.mic);
+        TextView apiResult = findViewById(R.id.results);
+        if(strResult.contains("i love you") || strResult.contains("i miss you")){
+            apiResult.setText("I love you too");
+            Toast.makeText(getApplicationContext(),"❤💛", Toast.LENGTH_LONG).show();
+        }
+        else if(strResult.contains("i need a girlfriend") || strResult.contains("i need a girlfriend")){
+            strResult = "tinder";
+            Toast.makeText(getApplicationContext(),"Here you go!", Toast.LENGTH_LONG).show();
+            searchFunction();
+        }
+        else if(strResult.contains("tilt screen")){
+            strResult = "askew";
+            searchFunction();
+        }
+        else if(strResult.contains("***")){
+            Toast.makeText(getApplicationContext(),"Bad Word!😔", Toast.LENGTH_LONG).show();
+        }
+        else if(strResult.contains("hello") || strResult.contains("mahalo") || strResult.contains("bonjour") || strResult.contains("sup") || strResult.contains("wassup")
+        || strResult.contains("hi") || strResult.contains("nice to meet you") || strResult.contains("thank you")){
+            apiResult.setText("You're a really nice person.");
+            strResult = "Thank you";
+            searchFunction();
+        }
+        else if(strResult.contains("good morning") || strResult.contains("good afternoon") || strResult.contains("good evening") || strResult.contains("good night")){
+            apiResult.setText("Same to you ❤💛");
+        }
+        else{
+            toast = 1;
+            strResult = strResult.replace(" ","");
+            startFunction();
+            if(toast == 1){
+                apiResult.setText("Sorry!, didn't understand what you wanted me to do! Here's a web search for that");
+                searchFunction();
+                toast = 0;
+            }
+        }
     }
 
     //Handles the speech text and calls appropriate function with some string alteration
@@ -287,7 +355,7 @@ public class speechTest extends AppCompatActivity {
             }
             startFunction();
         }
-        //Work in progress send function
+        //Send function done
         else if((strResult.indexOf("send ") == 0)){
             int flag = 0;
             strResult = strResult.substring(5);
@@ -428,8 +496,8 @@ public class speechTest extends AppCompatActivity {
                 searchFunction();
             }
         }
-        //Enabling call function
-        else if(strResult.indexOf("call") == 0 || strResult.indexOf("phone call") == 0){
+        //Solved call error
+        else if((strResult.indexOf("call") == 0 || strResult.indexOf("phone call") == 0) && !strResult.contains("call of duty")){
             if(strResult.indexOf("phone ") == 0){
                 strResult = strResult.substring(6);
             }
@@ -441,6 +509,80 @@ public class speechTest extends AppCompatActivity {
                 return;
             }
             callFunction(strResult);
+        }
+        //Set alarm done
+        else if(strResult.indexOf("set") == 0){
+            int flag = 0;
+            if(strResult.indexOf("set ") == 0){
+                strResult = strResult.substring(4);
+            }
+            else if(strResult.indexOf("set") == 0){
+                Toast.makeText(getApplicationContext(),"What should I set?", Toast.LENGTH_SHORT).show();
+            }
+            if(strResult.indexOf("a ") == 0 || strResult.indexOf("an ") == 0){
+                if(strResult.indexOf("a ") == 0)
+                    strResult = strResult.substring(2);
+                else if(strResult.indexOf("an ") == 0)
+                    strResult = strResult.substring(3);
+                else if(strResult.indexOf("a") == 0)
+                    Toast.makeText(getApplicationContext(),"What should I set?", Toast.LENGTH_SHORT).show();
+                else if(strResult.indexOf("an") == 0)
+                    Toast.makeText(getApplicationContext(),"What should I set?", Toast.LENGTH_SHORT).show();
+            }
+            if(strResult.indexOf("alarm") == 0){
+                if(strResult.indexOf("alarm ") == 0)
+                    strResult = strResult.substring(6);
+                if(strResult.indexOf("alarm") == 0){
+                    strResult = "clock";
+                    startFunction();
+                }
+                flag = 1;
+            }
+            if(strResult.indexOf("for") == 0 || strResult.indexOf("to") == 0 || strResult.indexOf("at") == 0 || strResult.indexOf("on") == 0){
+                if(strResult.indexOf("for ") == 0)
+                    strResult = strResult.substring(4);
+                if(strResult.indexOf("to ") == 0)
+                    strResult = strResult.substring(3);
+                if(strResult.indexOf("at ") == 0)
+                    strResult = strResult.substring(3);
+                if(strResult.indexOf("on ") == 0)
+                    strResult = strResult.substring(3);
+                if(strResult.indexOf("for") == 0 || strResult.indexOf("to") == 0 || strResult.indexOf("at") == 0 || strResult.indexOf("on") == 0){
+                    strResult = "clock";
+                    startFunction();
+                }
+            }
+            int hour = 0,minute = 0,index;
+            String ampm;
+            if(strResult.substring(0,1).matches(".*\\d.*")){
+                if(strResult.contains(":"))
+                    index = strResult.indexOf(":");
+                else if(strResult.contains(" "))
+                    index = strResult.indexOf(" ");
+                else
+                    index = strResult.length();
+                hour = Integer.parseInt(strResult.substring(0,index));
+                if(!strResult.isEmpty() && strResult.indexOf(" ") == -1 && strResult.length() > 1){
+                    minute = Integer.parseInt(strResult.substring(index + 1));
+                }
+                else if(!strResult.isEmpty() && strResult.length() > 1)
+                    minute = Integer.parseInt(strResult.substring(index + 1, strResult.indexOf(" ")));
+                alarmFunction(hour,minute);
+                strResult = strResult.substring(1);
+                return;
+            }
+            if(strResult.indexOf("a.m.") == 0){
+                ampm = "am";
+                //change to 24 hours format then call alarm function
+            }
+            else if(strResult.indexOf("p.m.") == 0){
+                ampm = "pm";
+                //change to 24 hours format then call alarm function
+            }
+        }
+        else{
+            //Contains easter eggs
+            miscellaneousFunction();
         }
     }
 
