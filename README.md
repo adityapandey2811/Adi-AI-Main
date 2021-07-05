@@ -38,4 +38,6 @@ There are many people in the world who don't have proper exposure to the smart w
 
 Download link: https://drive.google.com/file/d/1L7-e3v84c2tJeCXBcYXKBSNh-cVR458q/view?usp=sharing
 
+Developer: Aditya Pandey
+
 -----MORE FEATURES COMING SOON-----
