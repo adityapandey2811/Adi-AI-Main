@@ -41,6 +41,7 @@ public class speechTest extends AppCompatActivity {
     private WebView webView = null;
     private Button openInBrowser = null;
     private int flag;
+    private ImageView main_ai = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +60,8 @@ public class speechTest extends AppCompatActivity {
                 openInBrowser.setVisibility(View.GONE);
                 webView = findViewById(R.id.web);
                 webView.setVisibility(View.GONE);
+                main_ai = findViewById(R.id.main_ai);
+                main_ai.setVisibility(View.GONE);
                 //Vibration
                 Vibrator micTouch = (Vibrator)   getSystemService(Context.VIBRATOR_SERVICE);
                 micTouch.vibrate(20);
@@ -315,6 +318,7 @@ public class speechTest extends AppCompatActivity {
         if(strResult.contains("i love you") || strResult.contains("i miss you")){
             apiResult.setText("I love you too");
             Toast.makeText(getApplicationContext(),"❤💛", Toast.LENGTH_LONG).show();
+            main_ai.setVisibility(View.VISIBLE);
         }
         else if(strResult.contains("i need a girlfriend") || strResult.contains("i need a girlfriend")){
             strResult = "tinder";
@@ -329,7 +333,7 @@ public class speechTest extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),"Bad Word!😔", Toast.LENGTH_LONG).show();
             apiResult.setText("I am sorry!");
         }
-        else if(strResult.contains("hello") || strResult.contains("mahalo") || strResult.contains("bonjour") || strResult.contains("sup") || strResult.contains("wassup")
+        else if(strResult.contains("welcome") || strResult.contains("hello") || strResult.contains("mahalo") || strResult.contains("bonjour") || strResult.contains("sup") || strResult.contains("wassup")
         || strResult.contains("hi") || strResult.contains("nice to meet you") || strResult.contains("thank you")){
             apiResult.setText("You're a really nice person.");
             strResult = "Thank you";
@@ -337,6 +341,12 @@ public class speechTest extends AppCompatActivity {
         }
         else if(strResult.contains("good morning") || strResult.contains("good afternoon") || strResult.contains("good evening") || strResult.contains("good night")){
             apiResult.setText("Same to you ❤💛");
+            main_ai.setVisibility(View.VISIBLE);
+        }
+        else if(strResult.contains("sorry") || strResult.contains("i apologize")){
+            apiResult.setText("No need my friend!");
+            Snackbar.make(view,"It's all good 😁",Snackbar.LENGTH_SHORT).show();
+            main_ai.setVisibility(View.VISIBLE);
         }
         else{
             toast = 1;
@@ -491,7 +501,8 @@ public class speechTest extends AppCompatActivity {
                     sendEmail(null);
             }
         }
-        if((strResult.indexOf("find ") == 0 || strResult.indexOf("search ") == 0 || strResult.indexOf("what ") == 0 || strResult.indexOf("why ") == 0 || strResult.indexOf("where ") == 0 || strResult.indexOf("when ") == 0 || strResult.indexOf("which ") == 0 || strResult.indexOf("how ") == 0) && flag == 0){
+        if((strResult.indexOf("find ") == 0 || strResult.indexOf("search ") == 0 || strResult.indexOf("what ") == 0 || strResult.indexOf("why ") == 0 || strResult.indexOf("where ") == 0 || strResult.indexOf("when ") == 0 || strResult.indexOf("which ") == 0 || strResult.indexOf("how ") == 0 || strResult.indexOf("who ") == 0) && flag == 0){
+            flag = 1;
             if(strResult.contains("how are you")){
                 Toast.makeText(getApplicationContext(), "Awesome as always 😉", Toast.LENGTH_SHORT).show();
             }
@@ -500,6 +511,13 @@ public class speechTest extends AppCompatActivity {
             }
             else if(strResult.contains("when is your birthday")){
                 Toast.makeText(getApplicationContext(), "I guess you should know twin factor 😁", Toast.LENGTH_SHORT).show();
+            }
+            else if(strResult.contains("who are you")){
+                main_ai.setVisibility(View.VISIBLE);
+                main_ai.setImageResource(R.drawable.main_ai_image);
+                View view = findViewById(R.id.mic);
+                Toast.makeText(getApplicationContext(), "I am ADI 😁", Toast.LENGTH_SHORT).show();
+                Snackbar.make(view = findViewById(R.id.mic),"I am ADI 😁",Snackbar.LENGTH_SHORT).show();
             }
             else{
                 if(strResult.indexOf("find out ") == 0)
