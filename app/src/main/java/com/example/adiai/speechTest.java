@@ -40,6 +40,7 @@ public class speechTest extends AppCompatActivity {
     private BluetoothAdapter mBluetoothAdapter = null;
     private WebView webView = null;
     private Button openInBrowser = null;
+    private int flag;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +75,7 @@ public class speechTest extends AppCompatActivity {
     }
 
     //Turn on function
-    private void turnOnFunction(){
+    private int turnOnFunction(){
         if(strResult.contains("flashlight") || strResult.contains("light")){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 camManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
@@ -86,9 +87,11 @@ public class speechTest extends AppCompatActivity {
                     CameraAccessException.printStackTrace();
                 }
             }
+            return 11;
         }
         else if(strResult.contains("bluetooth") || strResult.contains("blue tooth")){
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            flag = 11;
             if (mBluetoothAdapter == null) {
                 Toast.makeText(getApplicationContext(), "This device does not support BlueTooth", Toast.LENGTH_LONG).show();
             }
@@ -96,11 +99,13 @@ public class speechTest extends AppCompatActivity {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent,10);
             }
+            return 11;
         }
+        return 0;
     }
 
     //Turn off function
-    private void turnOffFunction(){
+    private int turnOffFunction(){
         if(strResult.contains("flashlight") || strResult.contains("light")){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 camManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
@@ -112,22 +117,28 @@ public class speechTest extends AppCompatActivity {
                     CameraAccessException.printStackTrace();
                 }
             }
+            return 11;
         }
         else if(strResult.contains("bluetooth") || strResult.contains("blue tooth")){
+            flag = 11;
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             mBluetoothAdapter.disable();
+            return 11;
         }
+        return 0;
     }
     int toast = 0;
     //Start function
-    private void startFunction() {
+    private int startFunction() {
         // Final Code
         View view = findViewById(R.id.mic);
         if(strResult.contains("android") || strResult.contains("miui")){
             Snackbar.make(view,strResult + " is OS, Can't open!",Snackbar.LENGTH_SHORT).show();
+            return 12;
         }
         else if(strResult.contains("samsung") || strResult.contains("oneplus") || strResult.contains("xiaomi") || strResult.contains("nokia") || strResult.contains("qualcomm")){
             Snackbar.make(view,strResult + " is Brand, Can't open!",Snackbar.LENGTH_SHORT).show();
+            return 12;
         }
         else{
             if(strResult.contains("google")){
@@ -153,6 +164,7 @@ public class speechTest extends AppCompatActivity {
             if(checkApp == null && toast == 0){
                 Snackbar.make(view,"App not found!",Snackbar.LENGTH_SHORT).show();
             }
+            return 12;
         }
     }
 
@@ -342,14 +354,15 @@ public class speechTest extends AppCompatActivity {
     //Handles the speech text and calls appropriate function with some string alteration
     private void resultParse(){
         //turn function condition
-        if(strResult.indexOf("turn ") == 0 && strResult.contains("on ")){
-            turnOnFunction();
+        int flag = 0;
+        if(strResult.indexOf("turn ") == 0 && strResult.contains("on ") && flag == 0){
+            flag = turnOnFunction();
         }
-        else if(strResult.indexOf("turn ") == 0  && (strResult.contains("of ") || strResult.contains("off "))){
-            turnOffFunction();
+        if(strResult.indexOf("turn ") == 0  && (strResult.contains("of ") || strResult.contains("off ")) && flag == 0){
+            flag = turnOffFunction();
         }
         //start function condition
-        else if(strResult.indexOf("start ") == 0 || strResult.indexOf("open ") == 0) {
+        if((strResult.indexOf("start ") == 0 || strResult.indexOf("open ") == 0) && flag == 0) {
             if (strResult.indexOf("start ") == 0){
                 strResult = strResult.substring(6).replace(" ","");
             }
@@ -359,8 +372,7 @@ public class speechTest extends AppCompatActivity {
             startFunction();
         }
         //Send function done
-        else if((strResult.indexOf("send ") == 0)){
-            int flag = 0;
+        if((strResult.indexOf("send ") == 0) && flag == 0){
             strResult = strResult.substring(5);
             if(strResult.indexOf("a ") == 0){
                 strResult = strResult.replace("a ", "");
@@ -479,7 +491,7 @@ public class speechTest extends AppCompatActivity {
                     sendEmail(null);
             }
         }
-        else if(strResult.indexOf("find ") == 0 || strResult.indexOf("search ") == 0 || strResult.indexOf("what ") == 0 || strResult.indexOf("why ") == 0 || strResult.indexOf("where ") == 0 || strResult.indexOf("when ") == 0 || strResult.indexOf("which ") == 0 || strResult.indexOf("how ") == 0){
+        if((strResult.indexOf("find ") == 0 || strResult.indexOf("search ") == 0 || strResult.indexOf("what ") == 0 || strResult.indexOf("why ") == 0 || strResult.indexOf("where ") == 0 || strResult.indexOf("when ") == 0 || strResult.indexOf("which ") == 0 || strResult.indexOf("how ") == 0) && flag == 0){
             if(strResult.contains("how are you")){
                 Toast.makeText(getApplicationContext(), "Awesome as always 😉", Toast.LENGTH_SHORT).show();
             }
@@ -500,7 +512,7 @@ public class speechTest extends AppCompatActivity {
             }
         }
         //Solved call error
-        else if((strResult.indexOf("call") == 0 || strResult.indexOf("phone call") == 0) && !strResult.contains("call of duty")){
+        if((strResult.indexOf("call") == 0 || strResult.indexOf("phone call") == 0) && !strResult.contains("call of duty") && flag == 0){
             if(strResult.indexOf("phone ") == 0){
                 strResult = strResult.substring(6);
             }
@@ -512,10 +524,11 @@ public class speechTest extends AppCompatActivity {
                 return;
             }
             callFunction(strResult);
+            flag = 1;
         }
         //Set alarm done
-        else if(strResult.indexOf("set") == 0){
-            int flag = 0;
+        if(strResult.indexOf("set") == 0 && flag == 0){
+//            flag = 0;
             if(strResult.indexOf("set ") == 0){
                 strResult = strResult.substring(4);
             }
@@ -583,8 +596,9 @@ public class speechTest extends AppCompatActivity {
                 //change to 24 hours format then call alarm function
             }
         }
-        else{
+        if(flag == 0){
             //Contains easter eggs
+            strResult = originalString;
             miscellaneousFunction();
         }
     }
