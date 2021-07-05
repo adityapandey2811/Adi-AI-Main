@@ -1,5 +1,6 @@
 package com.example.adiai;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -10,13 +11,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.View;
 import android.webkit.PermissionRequest;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Knock Button Program
         Button btn = findViewById(R.id.button);
         btn.setBackgroundColor(Color.WHITE);
         btn.setTextColor(Color.BLACK);
@@ -50,12 +62,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-//        Snackbar.make(v,"App need all permissions to work properly!",Snackbar.LENGTH_LONG).setAction("Grant", new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.CALL_PHONE}, 14);
-//            }
-//        }).show();
         //Easter egg
         btn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -69,4 +75,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 }

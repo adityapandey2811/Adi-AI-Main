@@ -1,5 +1,6 @@
 package com.example.adiai;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,6 +17,7 @@ import android.os.Vibrator;
 import android.provider.AlarmClock;
 import android.speech.RecognizerIntent;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -24,6 +26,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.net.URLEncoder;
@@ -42,6 +51,8 @@ public class speechTest extends AppCompatActivity {
     private Button openInBrowser = null;
     private int flag;
     private ImageView main_ai = null;
+    private static int RC_SIGN_IN = 100;
+    GoogleSignInClient mGoogleSignInClient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +86,64 @@ public class speechTest extends AppCompatActivity {
                 }
             }
         });
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+    }
+
+    //Sign In Function
+    private void signIn() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        try{
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        } catch (Exception e){
+            Toast.makeText( this,"Error occured!",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    //Sign Out Function
+    private void signOut() {
+        mGoogleSignInClient.signOut().addOnCompleteListener(this, new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                // ...
+            }
+        });
+        View view = findViewById(R.id.mic);
+        Snackbar.make(view,"Signed Out!",Snackbar.LENGTH_SHORT).show();
+    }
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+//        if (requestCode == RC_SIGN_IN) {
+//            // The Task returned from this call is always completed, no need to attach
+//            // a listener.
+//            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+//            handleSignInResult(task);
+//        }
+//    }
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+            if (acct != null) {
+                String personName = acct.getDisplayName();
+                String personGivenName = acct.getGivenName();
+                String personFamilyName = acct.getFamilyName();
+                String personEmail = acct.getEmail();
+                String personId = acct.getId();
+                Uri personPhoto = acct.getPhotoUrl();
+            }
+            View view = findViewById(R.id.mic);
+            Snackbar.make(view,"Signed In",Snackbar.LENGTH_SHORT).show();
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Log.w(null, "signInResult:failed code=" + e.getStatusCode());
+        }
     }
 
     //Turn on function
@@ -348,6 +417,9 @@ public class speechTest extends AppCompatActivity {
             Snackbar.make(view,"It's all good 😁",Snackbar.LENGTH_SHORT).show();
             main_ai.setVisibility(View.VISIBLE);
         }
+//        else if(strResult.contains("sign out")){
+//            signOut();
+//        }
         else{
             toast = 1;
             strResult = strResult.replace(" ","");
@@ -614,6 +686,16 @@ public class speechTest extends AppCompatActivity {
                 //change to 24 hours format then call alarm function
             }
         }
+        if(flag == 0 && strResult.indexOf("sign ") == 0){
+            if(strResult.contains("in")){
+                signIn();
+                flag = 1;
+            }
+            if(strResult.contains("out")){
+                signOut();
+                flag = 1;
+            }
+        }
         if(flag == 0){
             //Contains easter eggs
             strResult = originalString;
@@ -631,6 +713,11 @@ public class speechTest extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == RECOGNIZER_RESULT && resultCode == RESULT_OK){
             try{
                 ArrayList<String> match = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
