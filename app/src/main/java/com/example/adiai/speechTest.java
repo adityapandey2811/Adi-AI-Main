@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.hardware.camera2.CameraManager;
@@ -14,6 +15,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.provider.AlarmClock;
 import android.speech.RecognizerIntent;
 import android.telephony.SmsManager;
@@ -23,6 +25,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,13 +37,17 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
 public class speechTest extends AppCompatActivity {
 
+    ArrayList<Word> history;
     //Variables for different functions support in the app
     private final int RECOGNIZER_RESULT = 1171;
     private String strResult = null;
@@ -51,8 +58,9 @@ public class speechTest extends AppCompatActivity {
     private Button openInBrowser = null;
     private int flag;
     private ImageView main_ai = null;
-    private static int RC_SIGN_IN = 100;
+    private static final int RC_SIGN_IN = 100;
     GoogleSignInClient mGoogleSignInClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,9 +94,15 @@ public class speechTest extends AppCompatActivity {
                 }
             }
         });
+
+        //Sign in variables
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+
+        history = readListFromPref(this);
+        if (history == null)
+            history = new ArrayList<>();
     }
 
     //Sign In Function
@@ -145,6 +159,28 @@ public class speechTest extends AppCompatActivity {
             Log.w(null, "signInResult:failed code=" + e.getStatusCode());
         }
     }
+    private static final String LIST_KEY = "list_key100";
+    //Storage in shared preferences
+    public static void writeListInPref(Context context, List<Word> list) {
+        Gson gson = new Gson();
+        String jsonString = gson.toJson(list);
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(LIST_KEY, jsonString);
+        editor.apply();
+    }
+
+    public static ArrayList<Word> readListFromPref(Context context) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        String jsonString = pref.getString(LIST_KEY, "");
+
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<Word>>() {}.getType();
+        ArrayList<Word> list = gson.fromJson(jsonString, type);
+        return list;
+    }
+
 
     //Turn on function
     private int turnOnFunction(){
@@ -389,8 +425,8 @@ public class speechTest extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),"❤💛", Toast.LENGTH_LONG).show();
             main_ai.setVisibility(View.VISIBLE);
         }
-        else if(strResult.contains("i need a girlfriend") || strResult.contains("i need a girlfriend")){
-            strResult = "tinder";
+        else if(strResult.contains("i need a girlfriend") || strResult.contains("i want a girlfriend")){
+            strResult = "Tinder";
             Toast.makeText(getApplicationContext(),"Here you go!", Toast.LENGTH_LONG).show();
             searchFunction();
         }
@@ -398,12 +434,18 @@ public class speechTest extends AppCompatActivity {
             strResult = "askew";
             searchFunction();
         }
+        else if(strResult.indexOf("history") == 0 || strResult.indexOf("get history") == 0){
+            setContentView(R.layout.activity_history);
+            WordAdapter list = new WordAdapter(this, history);
+            ListView listView = findViewById(R.id.list1);
+            listView.setAdapter(list);
+        }
         else if(strResult.contains("***")){
             Toast.makeText(getApplicationContext(),"Bad Word!😔", Toast.LENGTH_LONG).show();
             apiResult.setText("I am sorry!");
         }
         else if(strResult.contains("welcome") || strResult.contains("hello") || strResult.contains("mahalo") || strResult.contains("bonjour") || strResult.contains("sup") || strResult.contains("wassup")
-        || strResult.contains("hi") || strResult.contains("nice to meet you") || strResult.contains("thank you")){
+        || (strResult.indexOf("hi") == 0 && strResult.indexOf("hi ") != 0) || strResult.contains("nice to meet you") || strResult.contains("thank you")){
             apiResult.setText("You're a really nice person.");
             strResult = "Thank you";
             searchFunction();
@@ -417,9 +459,6 @@ public class speechTest extends AppCompatActivity {
             Snackbar.make(view,"It's all good 😁",Snackbar.LENGTH_SHORT).show();
             main_ai.setVisibility(View.VISIBLE);
         }
-//        else if(strResult.contains("sign out")){
-//            signOut();
-//        }
         else{
             toast = 1;
             strResult = strResult.replace(" ","");
@@ -591,6 +630,9 @@ public class speechTest extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "I am ADI 😁", Toast.LENGTH_SHORT).show();
                 Snackbar.make(view = findViewById(R.id.mic),"I am ADI 😁",Snackbar.LENGTH_SHORT).show();
             }
+            else if((strResult.indexOf("find out history") == 0 && strResult.indexOf("find out history ") == -1) || (strResult.indexOf("find history") == 0 && strResult.indexOf("find history ") != -1)){
+                miscellaneousFunction();
+            }
             else{
                 if(strResult.indexOf("find out ") == 0)
                     strResult = strResult.substring(9);
@@ -698,7 +740,6 @@ public class speechTest extends AppCompatActivity {
         }
         if(flag == 0){
             //Contains easter eggs
-            strResult = originalString;
             miscellaneousFunction();
         }
     }
@@ -725,6 +766,8 @@ public class speechTest extends AppCompatActivity {
                 strResult = match.get(0);
                 apiResult.setText(strResult);
                 originalString = strResult;
+                history.add(new Word(strResult));
+                writeListInPref(getApplicationContext(),history);
                 strResult = strResult.toLowerCase();
             } catch (Exception NullPointerException){
                 Toast.makeText(getApplicationContext(), "Speech Recognition Error!", Toast.LENGTH_SHORT).show();
