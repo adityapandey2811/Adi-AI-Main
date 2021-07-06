@@ -36,6 +36,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -159,8 +160,9 @@ public class speechTest extends AppCompatActivity {
             Log.w(null, "signInResult:failed code=" + e.getStatusCode());
         }
     }
-    private static final String LIST_KEY = "list_key100";
+
     //Storage in shared preferences
+    private static final String LIST_KEY = "list_key100";
     public static void writeListInPref(Context context, List<Word> list) {
         Gson gson = new Gson();
         String jsonString = gson.toJson(list);
@@ -434,7 +436,11 @@ public class speechTest extends AppCompatActivity {
             strResult = "askew";
             searchFunction();
         }
-        else if(strResult.indexOf("history") == 0 || strResult.indexOf("get history") == 0){
+        else if(strResult.indexOf("clear history") == 0 || strResult.indexOf("delete history") == 0 || strResult.indexOf("remove history") == 0){
+            history.clear();
+            Snackbar.make(view,"Voice command history deleted!", Snackbar.LENGTH_LONG).show();
+        }
+        else if((strResult.indexOf("history") == 0 && strResult.indexOf("history ") != 0) || (strResult.indexOf("get history") == 0 && strResult.indexOf("get history ") != 0)){
             setContentView(R.layout.activity_history);
             WordAdapter list = new WordAdapter(this, history);
             ListView listView = findViewById(R.id.list1);
