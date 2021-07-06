@@ -20,7 +20,7 @@ There are many people in the world who don't have proper exposure to the smart w
 - Set alarms.
 - Wanna make a phone call ? Fear not, Adi-AI can do it for you;)
 - You can also send messages through some of the top applications like email, sms and whatsapp.
-- You can track how Adi-Ai has assisted you so far, you can check your voice history as well.
+- You can track how Adi-Ai has assisted you so far, you can check your voice history as well and delete it if you want.
 - Easter eggs.
 
 # Wiki:
@@ -34,6 +34,7 @@ There are many people in the world who don't have proper exposure to the smart w
 - Send a whatsapp to number saying message
 - Set alarm for time
 - Check your voice history by saying history.
+- Clear history by saying delete history.
 - Experiment with app to find easter eggs.
 
 Download link: https://drive.google.com/file/d/1WLBBubKWfwhFDkWRJig8U8ScvW2pKR8Y/view?usp=sharing
