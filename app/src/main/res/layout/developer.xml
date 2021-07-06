@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+        <ImageView
+            android:id="@+id/developer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginBottom="400dp"
+            android:src="@drawable/developer"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Developer"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="300dp"
+            android:textColor="@color/black"
+            android:layout_centerHorizontal="true"
+            android:textSize="40sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aditya Pandey"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="200dp"
+            android:textColor="@color/black"
+            android:layout_centerHorizontal="true"
+            android:textSize="30sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="\@lunarzshine"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="150dp"
+            android:textColor="@color/black"
+            android:layout_centerHorizontal="true"
+            android:textSize="30sp"/>
+    </RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

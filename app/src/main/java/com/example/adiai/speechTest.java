@@ -623,6 +623,10 @@ public class speechTest extends AppCompatActivity {
             if(strResult.contains("how are you")){
                 Toast.makeText(getApplicationContext(), "Awesome as always 😉", Toast.LENGTH_SHORT).show();
             }
+            else if(strResult.indexOf("who made you") == 0 || strResult.indexOf("who is your father") == 0 ||
+                strResult.indexOf("who is your daddy") == 0 || strResult.indexOf("who developed you") == 0){
+                setContentView(R.layout.developer);
+            }
             else if(strResult.contains("where are you")){
                 Toast.makeText(getApplicationContext(), "Right there in your heart 💕", Toast.LENGTH_SHORT).show();
             }
