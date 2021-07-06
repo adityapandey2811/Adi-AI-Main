@@ -36,7 +36,7 @@ There are many people in the world who don't have proper exposure to the smart w
 - Check your voice history by saying history.
 - Experiment with app to find easter eggs.
 
-Download link: https://drive.google.com/file/d/18HakgPIbyvGPdfwrOpOnRFdYMHtZ-uqg/view?usp=sharing
+Download link: https://drive.google.com/file/d/1WLBBubKWfwhFDkWRJig8U8ScvW2pKR8Y/view?usp=sharing
 
 Developer: Aditya Pandey
 
